@@ -6,5 +6,5 @@ export default defineConfig({
   build: {
     outDir: 'dist'
   },
-  base: '/', // Ensure this is set to root
+  base: process.env.VITE_BASE_PATH || '/Sorting-Algorithm-Analyzer', 
 })
