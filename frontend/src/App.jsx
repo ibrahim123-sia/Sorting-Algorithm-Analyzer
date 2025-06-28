@@ -4,174 +4,180 @@ import {
   Bar,
   XAxis,
   YAxis,
-  Tooltip,
   CartesianGrid,
   ResponsiveContainer,
-} from "recharts";
+} from "recharts"; 
 
-const sortingAlgorithms = {
-  "Bubble Sort": (arr) => {
-    const a = [...arr];
-    let comparisons = 0;
-    let swaps = 0;
-    const start = performance.now();
-    for (let i = 0; i < a.length - 1; i++) {
-      for (let j = 0; j < a.length - i - 1; j++) {
-        comparisons++;
-        if (a[j] > a[j + 1]) {
-          [a[j], a[j + 1]] = [a[j + 1], a[j]];
-          swaps++;
-        }
-      }
-    }
-    return { time: performance.now() - start, comparisons, swaps };
-  },
+// Algorithms Declarations
 
-  "Quick Sort": (arr) => {
-    let comparisons = 0;
-    let swaps = 0;
-    const a = [...arr];
-    const start = performance.now();
+function bubbleSort(arr) {
+  const start = performance.now();
+  const a = [...arr];
+  let comparisons = 0;
+  let swaps = 0;
 
-    const partition = (low, high) => {
-      const pivot = a[high];
-      let i = low - 1;
-      for (let j = low; j < high; j++) {
-        comparisons++;
-        if (a[j] < pivot) {
-          i++;
-          [a[i], a[j]] = [a[j], a[i]];
-          swaps++;
-        }
-      }
-      [a[i + 1], a[high]] = [a[high], a[i + 1]];
-      swaps++;
-      return i + 1;
-    };
-
-    const quickSort = (low, high) => {
-      if (low < high) {
-        const pi = partition(low, high);
-        quickSort(low, pi - 1);
-        quickSort(pi + 1, high);
-      }
-    };
-
-    quickSort(0, a.length - 1);
-    return { time: performance.now() - start, comparisons, swaps };
-  },
-
-  "Merge Sort": (arr) => {
-    let comparisons = 0;
-    let swaps = 0;
-    const start = performance.now();
-    const a = [...arr];
-
-    const merge = (left, right) => {
-      const result = [];
-      let i = 0,
-        j = 0;
-
-      while (i < left.length && j < right.length) {
-        comparisons++;
-        if (left[i] <= right[j]) {
-          result.push(left[i++]);
-        } else {
-          result.push(right[j++]);
-        }
-        swaps++; 
-      }
-
-      while (i < left.length) {
-        result.push(left[i++]);
+  for (let i = 0; i < a.length - 1; i++) {
+    for (let j = 0; j < a.length - i - 1; j++) {
+      comparisons++;
+      if (a[j] > a[j + 1]) {
+        [a[j], a[j + 1]] = [a[j + 1], a[j]];
         swaps++;
       }
+    }
+  }
 
-      while (j < right.length) {
+  return { time: performance.now() - start, comparisons, swaps };
+}
+
+function quickSort(arr) {
+  const start = performance.now();
+  const a = [...arr];
+  let comparisons = 0;
+  let swaps = 0;
+
+  const partition = (low, high) => {
+    const pivot = a[high];
+    let i = low - 1;
+    for (let j = low; j < high; j++) {
+      comparisons++;
+      if (a[j] < pivot) {
+        i++;
+        [a[i], a[j]] = [a[j], a[i]];
+        swaps++;
+      }
+    }
+    [a[i + 1], a[high]] = [a[high], a[i + 1]];
+    swaps++;
+    return i + 1;
+  };
+
+  const sort = (low, high) => {
+    if (low < high) {
+      const pi = partition(low, high);
+      sort(low, pi - 1);
+      sort(pi + 1, high);
+    }
+  };
+
+  sort(0, a.length - 1);
+  return { time: performance.now() - start, comparisons, swaps };
+}
+
+function mergeSort(arr) {
+  const start = performance.now();
+  const a = [...arr];
+  let comparisons = 0;
+  let swaps = 0;
+
+  const merge = (left, right) => {
+    const result = [];
+    let i = 0, j = 0;
+
+    while (i < left.length && j < right.length) {
+      comparisons++;
+      if (left[i] <= right[j]) {
+        result.push(left[i++]);
+        swaps++;
+      } else {
         result.push(right[j++]);
         swaps++;
       }
+    }
 
-      return result;
-    };
+    return [...result, ...left.slice(i), ...right.slice(j)];
+  };
 
-    const mergeSort = (array) => {
-      if (array.length <= 1) return array;
-      const mid = Math.floor(array.length / 2);
-      return merge(mergeSort(array.slice(0, mid)), mergeSort(array.slice(mid)));
-    };
+  const sort = (array) => {
+    if (array.length <= 1) return array;
+    const mid = Math.floor(array.length / 2);
+    return merge(
+      sort(array.slice(0, mid)),
+      sort(array.slice(mid))
+    );
+  };
 
-    mergeSort(a);
-    return { time: performance.now() - start, comparisons, swaps };
-  },
+  sort(a);
+  return { time: performance.now() - start, comparisons, swaps };
+}
 
-  "Insertion Sort": (arr) => {
-    const a = [...arr];
-    let comparisons = 0;
-    let swaps = 0;
-    const start = performance.now();
+function insertionSort(arr) {
+  const start = performance.now();
+  const a = [...arr];
+  let comparisons = 0;
+  let swaps = 0;
 
-    for (let i = 1; i < a.length; i++) {
-      const key = a[i];
-      let j = i - 1;
+  for (let i = 1; i < a.length; i++) {
+    const key = a[i];
+    let j = i - 1;
 
-      while (j >= 0) {
-        comparisons++;
-        if (a[j] > key) {
-          a[j + 1] = a[j];
-          swaps++;
-          j--;
-        } else {
-          break;
-        }
-      }
-      a[j + 1] = key;
+    while (j >= 0) {
+      comparisons++;
+      if (a[j] > key) {
+        a[j + 1] = a[j];
+        swaps++;
+        j--;
+      } else break;
+    }
+    a[j + 1] = key;
+    swaps++;
+  }
+
+  return { time: performance.now() - start, comparisons, swaps };
+}
+
+function selectionSort(arr) {
+  const start = performance.now();
+  const a = [...arr];
+  let comparisons = 0;
+  let swaps = 0;
+
+  for (let i = 0; i < a.length - 1; i++) {
+    let minIdx = i;
+    for (let j = i + 1; j < a.length; j++) {
+      comparisons++;
+      if (a[j] < a[minIdx]) minIdx = j;
+    }
+    if (minIdx !== i) {
+      [a[i], a[minIdx]] = [a[minIdx], a[i]];
       swaps++;
     }
+  }
 
-    return { time: performance.now() - start, comparisons, swaps };
-  },
+  return { time: performance.now() - start, comparisons, swaps };
+}
 
-  "Selection Sort": (arr) => {
-    const a = [...arr];
-    let comparisons = 0;
-    let swaps = 0;
-    const start = performance.now();
+// Array of objects contains algorithms
+const sortingAlgorithms = [
+  { name: "Bubble Sort", func: bubbleSort },
+  { name: "Quick Sort", func: quickSort },
+  { name: "Merge Sort", func: mergeSort },
+  { name: "Insertion Sort", func: insertionSort },
+  { name: "Selection Sort", func: selectionSort },
+];
 
-    for (let i = 0; i < a.length - 1; i++) {
-      let minIdx = i;
-      for (let j = i + 1; j < a.length; j++) {
-        comparisons++;
-        if (a[j] < a[minIdx]) {
-          minIdx = j;
-        }
-      }
-      if (minIdx !== i) {
-        [a[i], a[minIdx]] = [a[minIdx], a[i]];
-        swaps++;
-      }
-    }
-
-    return { time: performance.now() - start, comparisons, swaps };
-  },
-};
-
-const MAX_ARRAY_SIZE = 10000;
-
+const MAX_ARRAY_SIZE = 10000; 
 export default function App() {
   const [size, setSize] = useState("");
-  const [selectedAlgos, setSelectedAlgos] = useState(new Set());
+  // new set is use to avoid duplication selection in algorithms
+  const [selectedAlgos, setSelectedAlgos] = useState(new Set()); 
   const [results, setResults] = useState([]);
   const [history, setHistory] = useState([]);
 
-  const generateArray = (n) => {
-  return Array.from({ length: n }, () =>
-    Math.floor(Math.random() * 10000) + 1
-  );
-};
+  // end = Number.MAX_SAFE_INTEGER decide the end limit of our random value
+  // Value: 9007199254740991
+  // Purpose: The largest integer JavaScript can safely represent without losing precision
 
+   const generateArray = (length, start = 0, end = Number.MAX_SAFE_INTEGER) => {
+    const arr = [];
+    for (let i = 0; i < length; i++) {
+      
+      const randomInt = (Math.floor(Math.random() * (end - start + 1)) + start);
+      arr.push(randomInt);
+    }
+    return arr;
+  };
 
-  const handleSort = () => {
+  const InputRange = () => {
     if (!size || size < 1 || size > MAX_ARRAY_SIZE) {
       alert(`Please enter array size between 1-${MAX_ARRAY_SIZE}`);
       return;
@@ -185,8 +191,11 @@ export default function App() {
     const data = generateArray(Number(size));
     const newResults = [];
 
-    selectedAlgos.forEach((algoName) => {
-      const { time, comparisons, swaps } = sortingAlgorithms[algoName](data);
+    selectedAlgos.forEach(algoName => {
+      const algorithm = sortingAlgorithms.find(a => a.name === algoName);
+      if (!algorithm) return;
+      
+      const { time, comparisons, swaps } = algorithm.func(data);
       newResults.push({
         name: algoName,
         time: +time.toFixed(2),
@@ -197,19 +206,20 @@ export default function App() {
     });
 
     setResults(newResults);
-    setHistory((prev) => [...prev, ...newResults]);
+    setHistory(prev => [...prev, ...newResults]);
     setSize("");
     setSelectedAlgos(new Set());
   };
 
+
+  // Design Implementation
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-900 text-gray-100 p-4">
+      <div className="max-w-8xl mx-auto">
         <h1 className="text-4xl font-bold mb-8 text-center">
           Sorting Algorithm Analyzer
         </h1>
 
-        
         <div className="bg-gray-800 rounded-xl p-6 mb-8 shadow-xl">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
@@ -224,11 +234,11 @@ export default function App() {
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {Object.keys(sortingAlgorithms).map((algo) => (
+              {sortingAlgorithms.map((algo) => (
                 <label
-                  key={algo}
+                  key={algo.name}
                   className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
-                    selectedAlgos.has(algo)
+                    selectedAlgos.has(algo.name)
                       ? "bg-blue-600"
                       : "bg-gray-700 hover:bg-gray-600"
                   }`}
@@ -236,28 +246,27 @@ export default function App() {
                   <input
                     type="checkbox"
                     className="hidden"
-                    checked={selectedAlgos.has(algo)}
+                    checked={selectedAlgos.has(algo.name)}
                     onChange={(e) => {
                       const newSet = new Set(selectedAlgos);
-                      e.target.checked ? newSet.add(algo) : newSet.delete(algo);
+                      e.target.checked ? newSet.add(algo.name) : newSet.delete(algo.name);
                       setSelectedAlgos(newSet);
                     }}
                   />
-                  <span className="select-none">{algo}</span>
+                  <span className="select-none">{algo.name}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <button
-            onClick={handleSort}
+            onClick={InputRange}
             className="w-full mt-6 py-3 px-6 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-colors"
           >
             Compare Selected Algorithms
           </button>
         </div>
 
-        
         {results.length > 0 && (
           <div className="space-y-8">
             
@@ -269,17 +278,17 @@ export default function App() {
                     <BarChart data={results}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="name" stroke="#9CA3AF" />
-                      <YAxis stroke="#9CA3AF" />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: "#1F2937" }}
-                        itemStyle={{ color: "#E5E7EB" }}
+                      <YAxis stroke="#9CA3AF"
+                        ticks={[0, 50, 100, 150, 200,250,320]}
                       />
+                    
+
                       <Bar
                         dataKey="time"
-                        name="Time (ms)"
                         fill="#3B82F6"
-                        radius={[4, 4, 0, 0]}
+                        radius={[9, 9, 0, 0]}
                       />
+
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -293,10 +302,7 @@ export default function App() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="name" stroke="#9CA3AF" />
                       <YAxis stroke="#9CA3AF" />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: "#1F2937" }}
-                        itemStyle={{ color: "#E5E7EB" }}
-                      />
+        
                       <Bar
                         dataKey="comparisons"
                         name="Comparisons"
