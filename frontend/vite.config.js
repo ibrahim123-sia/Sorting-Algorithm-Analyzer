@@ -6,5 +6,5 @@ export default defineConfig({
   build: {
     outDir: 'dist'
   },
-  base: './', // ✅ Use relative paths for Netlify
+  base: './', 
 })
